@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Damir Gazizullin
+ * Copyright (c) 2024 Sebastian Nava Urribarri
  * SPDX-License-Identifier: Apache-2.0
  */
 
