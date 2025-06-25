@@ -29,7 +29,7 @@ module spi_peripheral (
     // because we need both the oldest and second oldest values
 
     reg read_or_write;     // one for read / write
-    reg [5:0] address_bits;     // one for address
+    reg [6:0] address_bits;     // one for address
     reg [7:0] information_bits;     // one for information
     reg [15:0] all_bits;     // one register for everything
     reg [15:0] counter;
@@ -59,7 +59,7 @@ begin
     if (!rst)
     begin
         read_or_write <= 1'b0;
-        address_bits <= 6'b000000;
+        address_bits <= 7'b0000000;
         information_bits <= 8'h00;
         all_bits <= 16'h0000;
         counter <= 0;
@@ -78,7 +78,7 @@ begin
     if (cs_falls) // get rid of everything in the register to get ready for next time
         begin
         read_or_write <= 1'b0;   
-        address_bits <= 6'b0;   
+        address_bits <= 7'b0;   
         information_bits <= 8'b0;   
         all_bits <= 16'b0;    
         counter <=0;
@@ -110,11 +110,11 @@ begin
     begin
         all_bits <= {read_or_write, address_bits, information_bits};
         case(address_bits)
-        6'b000000: en_reg_out_7_0<=information_bits;
-        6'b000001: en_reg_out_15_8<=information_bits;
-        6'b000010: en_reg_pwm_7_0<=information_bits;
-        6'b000011: en_reg_pwm_15_8<=information_bits;
-        6'b000100: pwm_duty_cycle<=information_bits;
+        7'b0000000: en_reg_out_7_0<=information_bits;
+        7'b0000001: en_reg_out_15_8<=information_bits;
+        7'b0000010: en_reg_pwm_7_0<=information_bits;
+        7'b0000011: en_reg_pwm_15_8<=information_bits;
+        7'b0000100: pwm_duty_cycle<=information_bits;
         endcase
     transaction_ready <= 1'b0;
     end
