@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+takes in clock and signal, synchronise and then reads over time to then be sent away
 
 ## How to test
 
-Explain how to use your project
+using some software
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+n/a
