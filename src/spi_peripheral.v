@@ -34,7 +34,7 @@ module spi_peripheral (
    // reg [15:0] all_bits;     // one register for everything
     reg [15:0] counter;
 
-    wire cs_falls = (cs_syncrhonised[1] == 1'b1 ) & (cs_syncrhonised[2] == 0'b1);
+    wire cs_falls = (cs_syncrhonised[1] == 1'b1 ) & (cs_syncrhonised[2] == 1'b1);
     //wire cs_rises = (cs_syncrhonised[1] == 0'b1 ) & (cs_syncrhonised[2] == 1'b1);
 
     wire sclk_rising  = (sclk_synchronised[2:1] == 2'b01);
