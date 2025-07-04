@@ -31,14 +31,14 @@ module spi_peripheral (
     reg read_or_write;     // one for read / write
     reg [6:0] address_bits;     // one for address
     reg [7:0] information_bits;     // one for information
-    reg [15:0] all_bits;     // one register for everything
+   // reg [15:0] all_bits;     // one register for everything
     reg [15:0] counter;
 
     wire cs_falls = (cs_syncrhonised[1] == 1'b1 ) & (cs_syncrhonised[2] == 0'b1);
-    wire cs_rises = (cs_syncrhonised[1] == 0'b1 ) & (cs_syncrhonised[2] == 1'b1);
+    //wire cs_rises = (cs_syncrhonised[1] == 0'b1 ) & (cs_syncrhonised[2] == 1'b1);
 
     wire sclk_rising  = (sclk_synchronised[2:1] == 2'b01);
-    wire sclk_falling = (sclk_synchronised[2:1] == 2'b10);
+   // wire sclk_falling = (sclk_synchronised[2:1] == 2'b10);
 // block for signal scyhrnoisation
 
 always @(posedge clk or negedge rst) 
@@ -93,7 +93,7 @@ begin
             end 
             else if (counter < 8)
             begin
-                address_bits <= {address_bits[4:0], copi_synchronised[2]}; // take address, shuffling everything over
+                address_bits <= {address_bits[5:0], copi_synchronised[2]}; // take address, shuffling everything over
             end
             else if (counter < 16)
             begin
@@ -108,13 +108,13 @@ begin
 // transaction stuff
     if (transaction_ready && (counter == 16)) 
     begin
-        all_bits <= {read_or_write, address_bits, information_bits};
         case(address_bits)
         7'b0000000: en_reg_out_7_0<=information_bits;
         7'b0000001: en_reg_out_15_8<=information_bits;
         7'b0000010: en_reg_pwm_7_0<=information_bits;
         7'b0000011: en_reg_pwm_15_8<=information_bits;
         7'b0000100: pwm_duty_cycle<=information_bits;
+        default: ;
         endcase
     transaction_ready <= 1'b0;
     end
