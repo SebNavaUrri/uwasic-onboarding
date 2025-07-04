@@ -34,7 +34,7 @@ module spi_peripheral (
    // reg [15:0] all_bits;     // one register for everything
     reg [15:0] counter;
 
-    wire cs_falls = (cs_syncrhonised[1] == 1'b1 ) & (cs_syncrhonised[2] == 1'b1);
+    wire cs_falls = (cs_syncrhonised[1] == 1'b1 ) & (cs_syncrhonised[2] == 1'b0);
     //wire cs_rises = (cs_syncrhonised[1] == 0'b1 ) & (cs_syncrhonised[2] == 1'b1);
 
     wire sclk_rising  = (sclk_synchronised[2:1] == 2'b01);
@@ -54,7 +54,7 @@ begin
     end
 end
 
-always@(posedge sclk or negedge rst)
+always@(posedge clk or negedge rst)
 begin
     if (!rst)
     begin
@@ -106,7 +106,7 @@ begin
             transaction_ready <= 1'b1;
         end 
 // transaction stuff
-    if (transaction_ready && (counter == 16)) 
+    if ((counter == 16)) 
     begin
         case(address_bits)
         7'b0000000: en_reg_out_7_0<=information_bits;
