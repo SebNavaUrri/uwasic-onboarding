@@ -28,7 +28,7 @@ module spi_peripheral (
    reg[2:0] copi_synchronised;
     // because we need both the oldest and second oldest values
 
-    reg read_or_write;     // one for read / write
+    //reg read_or_write;     // one for read / write
     reg [6:0] address_bits;     // one for address
     reg [7:0] information_bits;     // one for information
    // reg [15:0] all_bits;     // one register for everything
@@ -58,7 +58,7 @@ always@(posedge sclk or negedge rst)
 begin
     if (!rst)
     begin
-        read_or_write <= 1'b0;
+      //  read_or_write <= 1'b0;
         address_bits <= 7'b0000000;
         information_bits <= 8'h00;
        // all_bits <= 16'h0000;
@@ -77,7 +77,7 @@ begin
 
     if (cs_falls) // get rid of everything in the register to get ready for next time
         begin
-        read_or_write <= 1'b0;   
+       // read_or_write <= 1'b0;   
         address_bits <= 7'b0;   
         information_bits <= 8'b0;   
        // all_bits <= 16'b0;    
@@ -89,9 +89,9 @@ begin
         begin
             if (counter == 0)
             begin
-            read_or_write <= copi_synchronised[2]; // take in the first bit
+           // read_or_write <= copi_synchronised[2]; // take in the first bit
             end 
-            else if (counter < 8)
+            else if ((counter > 1) & (counter < 8))
             begin
                 address_bits <= {address_bits[5:0], copi_synchronised[2]}; // take address, shuffling everything over
             end
