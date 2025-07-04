@@ -61,7 +61,7 @@ begin
         read_or_write <= 1'b0;
         address_bits <= 7'b0000000;
         information_bits <= 8'h00;
-        all_bits <= 16'h0000;
+       // all_bits <= 16'h0000;
         counter <= 0;
         transaction_ready <= 1'b0;
         en_reg_out_7_0 <= 8'h00;
@@ -80,7 +80,7 @@ begin
         read_or_write <= 1'b0;   
         address_bits <= 7'b0;   
         information_bits <= 8'b0;   
-        all_bits <= 16'b0;    
+       // all_bits <= 16'b0;    
         counter <=0;
         end
     else if((cs_syncrhonised[2] == 1'b0) & (!transaction_ready))
