@@ -38,10 +38,10 @@ module tt_um_uwasic_onboarding_seb_nava_urribarri (
   );
   spi_peripheral spi_peripheral_inst(
       .clk(clk),
-      .COPI(ui_in[1]),
-      .SCLK(ui_in[0]),
-      .nCS(ui_in[2]),
-      .rst_n(rst_n),
+      .copi(ui_in[1]),
+      .sclk(ui_in[0]),
+      .cs(ui_in[2]),
+      .rst(rst_n),
       .en_reg_out_7_0(en_reg_out_7_0),
       .en_reg_out_15_8(en_reg_out_15_8),
       .en_reg_pwm_7_0(en_reg_pwm_7_0),
