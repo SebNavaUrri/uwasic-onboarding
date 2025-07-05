@@ -106,7 +106,7 @@ begin
             transaction_ready <= 1'b1;
         end 
 // transaction stuff
-    if ((counter == 16)) 
+    if ((transaction_ready)) 
     begin
         case(address_bits)
         7'b0000000: en_reg_out_7_0<=information_bits;
