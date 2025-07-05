@@ -105,6 +105,7 @@ begin
         begin
             transaction_ready <= 1'b1;
         end 
+    end
 // transaction stuff
     if ((transaction_ready)) 
     begin
@@ -120,5 +121,4 @@ begin
     end
     end
 end 
-end
 endmodule
