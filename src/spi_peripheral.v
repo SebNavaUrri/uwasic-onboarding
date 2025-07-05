@@ -109,11 +109,11 @@ begin
     if ((transaction_ready)) 
     begin
         case(address_bits)
-        7'b0000000: en_reg_out_7_0<=information_bits;
-        7'b0000001: en_reg_out_15_8<=information_bits;
-        7'b0000010: en_reg_pwm_7_0<=information_bits;
-        7'b0000011: en_reg_pwm_15_8<=information_bits;
-        7'b0000100: pwm_duty_cycle<=information_bits;
+        7'h00: en_reg_out_7_0<=information_bits;
+        7'h01: en_reg_out_15_8<=information_bits;
+        7'h02: en_reg_pwm_7_0<=information_bits;
+        7'h03: en_reg_pwm_15_8<=information_bits;
+        7'h04: pwm_duty_cycle<=information_bits;
         default: ;
         endcase
     transaction_ready <= 1'b0;
