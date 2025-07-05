@@ -101,7 +101,7 @@ begin
             end
         counter <= counter + 1; // increment coutner until we get all bits we need
         end
-        if (counter == 15)
+        if (counter == 16)
         begin
             transaction_ready <= 1'b1;
         end 
