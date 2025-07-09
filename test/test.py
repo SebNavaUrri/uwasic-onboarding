@@ -159,3 +159,23 @@ async def test_pwm_freq(dut):
 async def test_pwm_duty(dut):
     # Write your test here
     dut._log.info("PWM Duty Cycle test completed successfully")
+
+@cocotb.test()
+async def levelling(dut, prev_level, desired_level, max_cycles=5000):
+    for i in range(max_cycles):
+        await ClockCycles(dut.clk, 1)
+        if (int(dut.uo_out.value) & 1) == prev_level:
+            break
+    else:
+        stuck = int(dut.uo_out.value) & 1
+        raise TestFailure(
+            f"Timeout: PWM never reached prev_level={prev_level}; stuck at {stuck} after {max_cycles} cycles"
+        )
+    for i in range(max_cycles):
+        await ClockCycles(dut.clk, 1)
+        bit0 = int(dut.uo_out.value) & 1
+        if bit0 == desired_level:
+            return get_sim_time("ns")
+    stuck = (int(dut.uo_out.value) & 1)
+    raise TestFailure(f"Timeout: PWM never reached {desired_level}; stuck at {stuck} after {max_cycles} cycles")
+
