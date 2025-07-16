@@ -7,6 +7,7 @@ from cocotb.triggers import RisingEdge
 from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
+from cocotb.result import TestFailure
 
 async def await_half_sclk(dut):
     """Wait for the SCLK signal to go high or low."""
@@ -179,6 +180,18 @@ async def levelling(dut, prev_level, desired_level, max_cycles=5000):
     stuck = (int(dut.uo_out.value) & 1)
     raise TestFailure(f"Timeout: PWM never reached {desired_level}; stuck at {stuck} after {max_cycles} cycles")
 
+async def wait_for_value(dut, target_bit, timeout_cycles=5000):
+    """
+    Poll uio_out[0] until it == target_bit, or time out.
+    Returns the current sim time in ns when it sees it.
+    """
+    for _ in range(timeout_cycles):
+        # grab bit-0
+        bit0 = int(dut.uo_out.value) & 1
+        if bit0 == target_bit:
+            return cocotb.utils.get_sim_time(units="ns")
+        await ClockCycles(dut.clk, 1)
+    raise TimeoutError(f"Timed out waiting for PWM to become {target_bit}")
 
 ## lets go
 @cocotb.test()
@@ -229,7 +242,7 @@ async def test_pwm_duty_25_75(dut):
 
     # 25% duty
     await send_spi_transaction(dut, 1, 0x04, 64)  # 64/255 ≈ 25%
-    await ClkCycles(dut.clk, 10000)
+    await ClockCycles(dut.clk, 10000)
 
     p1 = await wait_for_level(dut, 0, 1, max_cycles=5000)
     pf = await wait_for_level(dut, 1, 0, max_cycles=5000)
