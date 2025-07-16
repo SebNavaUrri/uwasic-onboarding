@@ -208,3 +208,49 @@ async def test_pwm_freq_1khz(dut):
 
     assert 990 <= freq_hz <= 1010, f"Measured {freq_hz:.1f} Hz; expected 1000 Hz ±1%"
     dut._log.info(f"PWM freq OK: {freq_hz:.1f} Hz")
+
+
+@cocotb.test()
+async def test_pwm_duty_25_75(dut):
+    clk = Clock(dut.clk, 100, units="ns")
+    cocotb.start_soon(clk.start())
+
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 5)
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 5)
+    dut.ena.value = 1
+    dut.ui_in.value = ui_in_logicarray(1, 0, 0)
+
+    await send_spi_transaction(dut, 1, 0x00, 0x01)
+    await send_spi_transaction(dut, 1, 0x02, 3)  # 1khz freq
+
+    pwm_signal = dut.uo_out[0]
+
+    # 25% duty
+    await send_spi_transaction(dut, 1, 0x04, 64)  # 64/255 ≈ 25%
+    await ClkCycles(dut.clk, 10000)
+
+    p1 = await wait_for_level(dut, 0, 1, max_cycles=5000)
+    pf = await wait_for_level(dut, 1, 0, max_cycles=5000)
+    p2 = await wait_for_level(dut, 0, 1, max_cycles=5000)
+
+    high_ns = pf - p1
+    period_ns = p2 - p1
+    duty = 100 * high_ns / period_ns
+    assert 24 <= duty <= 26, f"25%: measured {duty:.1f}%, outside expected range"
+
+    # 75% duty
+    await send_spi_transaction(dut, 1, 0x04, 192)  # 192/255 ≈ 75%
+    await ClockCycles(dut.clk, 10000)
+
+    p1 = await wait_for_level(dut, 0, 1, max_cycles=5000)
+    pf = await wait_for_level(dut, 1, 0, max_cycles=5000)
+    p2 = await wait_for_level(dut, 0, 1, max_cycles=5000)
+
+    high_ns = pf - p1
+    period_ns = p2 - p1
+    duty = 100 * high_ns / period_ns
+    assert 74 <= duty <= 76, f"75%: measured {duty:.1f}%, outside expected range"
+
+    dut._log.info("PWM duty-cycle 25% and 75% tests passed")
