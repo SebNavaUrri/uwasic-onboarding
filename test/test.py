@@ -179,3 +179,32 @@ async def levelling(dut, prev_level, desired_level, max_cycles=5000):
     stuck = (int(dut.uo_out.value) & 1)
     raise TestFailure(f"Timeout: PWM never reached {desired_level}; stuck at {stuck} after {max_cycles} cycles")
 
+
+## lets go
+@cocotb.test()
+async def test_pwm_freq_1khz(dut):
+    clk = Clock(dut.clk, 100, units="ns")  # 10 mhz clock
+    cocotb.start_soon(clk.start())
+
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 5)
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 5)
+    dut.ena.value = 1
+    dut.ui_in.value = ui_in_logicarray(1, 0, 0)
+
+    # configure for 1khz pwm
+    await send_spi_transaction(dut, 1, 0x00, 0x01)
+    await send_spi_transaction(dut, 1, 0x02, 3)  # new value for 1khz
+    await send_spi_transaction(dut, 1, 0x04, 128)  # 50% duty
+
+    await ClockCycles(dut.clk, 10000)
+
+    first_rise = await wait_for_level(dut, 0, 1, max_cycles=5000)
+    other_rise = await wait_for_level(dut, 0, 1, max_cycles=5000)
+
+    period_ns = other_rise - first_rise
+    freq_hz = 1e9 / period_ns
+
+    assert 990 <= freq_hz <= 1010, f"Measured {freq_hz:.1f} Hz; expected 1000 Hz ±1%"
+    dut._log.info(f"PWM freq OK: {freq_hz:.1f} Hz")
